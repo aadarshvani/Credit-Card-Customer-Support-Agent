@@ -123,33 +123,3 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
-with chat_container:
-    for msg in st.session_state.session_state["history"]:
-        align = "right" if msg["role"] == "user" else "left"
-        bg = "#e6f7ff" if msg["role"] == "user" else "#f6f6f6"
-        st.markdown(
-            f"<div style='text-align: {align}; background: {bg}; padding: 8px; border-radius: 8px; margin: 4px 0;'>{msg['content']}</div>",
-            unsafe_allow_html=True,
-        )
-
-# Input area
-with st.form(key="chat_form", clear_on_submit=True):
-    user_input = st.text_input("Type your question...", value=st.session_state.user_input, key="user_input", placeholder="Ask me anything about your AmEx credit card...")
-    submitted = st.form_submit_button("Send")
-    if submitted and user_input.strip():
-        add_message("user", user_input)
-        # Prepare state for graph
-        state = st.session_state.session_state
-        state["history"][-1]["query"] = user_input
-        # Run the graph
-        for step in app_flow.stream(state):
-            pass  # The graph updates the state in place
-        # Get the latest agent answer
-        answer = state.get("final_answer") or "Sorry, I couldn't find an answer."
-        add_message("agent", answer)
-        st.session_state.user_input = ""  # This is safe here because the form will clear the input
-
-st.markdown(
-    "<p style='text-align: center; color: #aaa; font-size: 0.9em;'>Powered by advanced AI, RAG, and ML models.</p>",
-    unsafe_allow_html=True,
-)

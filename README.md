@@ -144,8 +144,9 @@ Credit Card Customer Support Agent/
 
 ### Prerequisites
 - Python 3.8+
-- Groq API key
-- Web search API key (Tavily/Serper)
+- Groq API key (required)
+- Web search API key (optional - Tavily/Serper)
+- ML model API endpoints (optional)
 
 ### Installation
 
@@ -161,22 +162,39 @@ pip install -r requirements.txt
 ```
 
 3. **Set up environment variables**
+Create a `.env` file in the project root:
 ```bash
-# Create config/settings.py
-GROQ_API_KEY = "your_groq_api_key"
-WEB_SEARCH_API_KEY = "your_search_api_key"
-CHURN_MODEL_API = "your_churn_model_endpoint"
-APPROVAL_MODEL_API = "your_approval_model_endpoint"
+# Required
+GROQ_API_KEY=your_groq_api_key_here
+
+# Optional (for enhanced features)
+WEB_SEARCH_API_KEY=your_tavily_or_serper_api_key_here
+CHURN_MODEL_API=https://your-churn-model-api.com/predict
+CREDIT_MODEL_API=https://your-credit-model-api.com/approve
 ```
 
-4. **Initialize vector database**
+4. **Run the setup script**
 ```bash
-python src/rag_engine.py --init-db
+python setup.py
 ```
 
 5. **Run the application**
 ```bash
-streamlit run src/app.py
+streamlit run main.py
+```
+
+### Alternative: Manual Setup
+
+If you prefer to set up manually:
+
+1. **Initialize vector database**
+```bash
+python -c "from rag.vector_store import build_faiss_index; build_faiss_index('rag/knowledge_base/faqs.md')"
+```
+
+2. **Run the application**
+```bash
+streamlit run main.py
 ```
 
 ---

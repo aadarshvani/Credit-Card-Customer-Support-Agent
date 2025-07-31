@@ -33,9 +33,13 @@ def aggregator_node(state: SessionState) -> SessionState:
 
 def quality_checker_node(state: SessionState) -> SessionState:
     question = state["history"][-1]["query"]
-    answer = state.get("aggregated_response", {}).get("message") or state.get("aggregated_response", {}).get("summary") or ""
-    checked = check_response_quality({"question": question, "answer": answer})
-    # Use .get() with default value to avoid KeyError
+    answer = state.get("aggregated_response", {}).get("message") or state.get("aggregated_response", {}).get("answer") or ""
+    
+    # Create the response dict for quality checking
+    response_dict = {"question": question, "answer": answer}
+    checked = check_response_quality(response_dict)
+    
+    # Update state with quality information
     state["quality"] = checked.get("quality", "unknown")
     state["feedback"] = checked.get("feedback")
     state["final_answer"] = answer

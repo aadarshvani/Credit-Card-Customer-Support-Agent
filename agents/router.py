@@ -29,19 +29,24 @@ def route_query(query: str, customer_data: dict = None) -> dict:
     intent = detect_intent(query)
     if intent == "churn_risk":
         if customer_data:
-            return predict_churn(customer_data)
+            result = predict_churn(customer_data)
+            return {"status": "success", "type": "churn", "message": result.get("explanation", "Churn analysis completed."), "data": result}
         else:
-            return {"error": "Customer data required for churn prediction."}
+            return {"status": "error", "message": "Customer data required for churn prediction."}
     elif intent == "credit_approval":
         if customer_data:
-            return check_credit_approval(customer_data)
+            result = check_credit_approval(customer_data)
+            return {"status": "success", "type": "credit", "message": result.get("explanation", "Credit analysis completed."), "data": result}
         else:
-            return {"error": "Customer data required for credit approval."}
+            return {"status": "error", "message": "Customer data required for credit approval."}
     elif intent == "web_search":
-        return {"results": search_web(query)}
+        result = search_web(query)
+        return {"status": "success", "type": "web", "message": result.get("summary", "Web search completed."), "data": result}
     elif intent == "rag_search":
-        return {"results": query_knowledge_base(query)}
+        result = query_knowledge_base(query)
+        return {"status": "success", "type": "rag", "message": "Knowledge base search completed.", "data": result}
     elif intent == "human_review":
-        return request_human_review(query, customer_data)
+        result = request_human_review(query, customer_data)
+        return {"status": "pending", "type": "human", "message": result.get("message", "Human review requested."), "data": result}
     else:
-        return {"error": f"Unknown intent: {intent}"}
+        return {"status": "error", "message": f"Unknown intent: {intent}"}
